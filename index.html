@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrikli Araç Sahipleri - Topluluk Analitiği</title>
+    <!-- Google Fonts: Plus Jakarta Sans for a premium tech aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css?v=2.1.5">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <!-- Sidebar Close Button for Mobile -->
+            <button class="sidebar-close-btn" id="sidebar-close-btn" title="Kapat">
+                <i data-lucide="x"></i>
+            </button>
+
+            <div class="sidebar-brand">
+                <img src="logo.png" alt="Logo" class="brand-logo-img">
+                <div class="brand-text">
+                    <h2>Elektrikli Araç Sahipleri</h2>
+                    <span>Topluluk İstatistikleri</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#overview" class="menu-item active" id="tab-overview">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Genel Bakış</span>
+                </a>
+                <a href="#leaderboard" class="menu-item" id="tab-leaderboard">
+                    <i data-lucide="trophy"></i>
+                    <span>Liderlik Tablosu</span>
+                </a>
+                <a href="#vehicles" class="menu-item" id="tab-vehicles">
+                    <i data-lucide="car"></i>
+                    <span>Araç Dağılımı</span>
+                </a>
+                <a href="#kvkk" class="menu-item" id="tab-kvkk">
+                    <i data-lucide="shield-check"></i>
+                    <span>KVKK Aydınlatma</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="connection-status connected" id="connection-status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text" id="connection-status-text">Bağlantı Aktif</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle-btn" id="mobile-menu-btn" title="Menü">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="header-title">
+                        <h1 id="page-title">Genel Bakış</h1>
+                        <p id="page-subtitle">Topluluk verileri ve istatistik analizi</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a class="btn btn-primary btn-icon" href="https://t.me/ToggSahipleri" target="_blank" rel="noopener"
+                        title="Telegram Grubuna Git">
+                        <i data-lucide="send"></i>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Dashboard Content Container -->
+            <div class="content-body">
+
+                <!-- SECTION: Overview Tab -->
+                <div class="tab-pane active" id="pane-overview">
+                    <!-- KPI Grid -->
+                    <section class="kpi-grid">
+                        <!-- KPI Card: Total Members -->
+                        <div class="kpi-card glass">
+                            <div class="kpi-icon-wrapper blue">
+                                <i data-lucide="users"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Toplam Üye</span>
+                                <h3 class="kpi-value" id="kpi-total-users">-</h3>
+
+                            </div>
+                        </div>
+
+                        <!-- KPI Card: Total Messages -->
+                        <div class="kpi-card glass">
+                            <div class="kpi-icon-wrapper violet">
+                                <i data-lucide="message-square"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Toplam Mesaj</span>
+                                <h3 class="kpi-value" id="kpi-total-messages">-</h3>
+
+                            </div>
+                        </div>
+
+
+
+                        <!-- KPI Card: Most Active Vehicle -->
+                        <div class="kpi-card glass">
+                            <div class="kpi-icon-wrapper emerald">
+                                <i data-lucide="car"></i>
+                            </div>
+                            <div class="kpi-info" style="width: 100%;">
+                                <span class="kpi-label">En Çok Tercih Edilen 3 Araç</span>
+                                <div id="kpi-top-vehicles-list"
+                                    style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px; width: 100%;">
+                                    <!-- JS Will Render Top 3 Vehicles Here -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="grid-layout two-cols">
+                        <!-- Podium Card: Weekly Stars -->
+                        <div class="card glass podium-card"
+                            style="display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="card-header" style="margin-bottom: 0;">
+                                <h3 class="card-title">🏆 Haftanın Yıldızları</h3>
+                                <p class="card-description">Son 7 günün en aktif ilk 5 üyesi</p>
+                            </div>
+                            <div class="podium-container" id="podium-wrapper"
+                                style="margin-top: auto; padding-bottom: 0; display: flex; justify-content: center; align-items: flex-end; gap: 16px;">
+                                <!-- JS Will Render Podium Here -->
+                                <div class="podium-placeholder">Kullanıcı verileri yükleniyor...</div>
+                            </div>
+                        </div>
+
+                        <!-- Chart Card: Vehicles -->
+                        <div class="card glass chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Araç Tercihleri Dağılımı</h3>
+                                <p class="card-description">Kullanıcıların sahip olduğu araç modelleri</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="chart-vehicles"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-layout two-cols" style="margin-top: 24px;">
+                        <!-- Chart Card: Activity -->
+                        <div class="card glass chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Etkinlik Zaman Grafiği</h3>
+                                <p class="card-description">Günlük mesaj ve etkileşim sayıları</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="chart-activity"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card: City Distribution -->
+                        <div class="card glass"
+                            style="display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="card-header">
+                                <h3 class="card-title">📍 Topluluk Şehir Dağılımı</h3>
+                                <p class="card-description">Üyelerin yaşadığı şehirlerin dağılımı</p>
+                            </div>
+                            <div class="card-body" style="margin-top: auto; width: 100%;">
+                                <div id="city-distribution-list"
+                                    style="display: flex; flex-direction: column; gap: 16px; margin-top: 12px;">
+                                    <!-- JS Will Render Progress Bars Here -->
+                                    <div
+                                        style="font-size: 0.95rem; color: hsl(var(--text-muted)); font-weight: 500; text-align: center; padding: 12px 0;">
+                                        Yükleniyor...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Leaderboard Tab -->
+                <div class="tab-pane" id="pane-leaderboard">
+                    <div class="card glass">
+                        <div class="table-header-toolbar">
+                            <div class="search-box">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="leaderboard-search" placeholder="İsim veya kullanıcı adı ara...">
+                            </div>
+                            <div class="filter-group">
+                                <select id="filter-level" class="form-select">
+                                    <option value="">Tüm Seviyeler</option>
+                                </select>
+                                <select id="filter-vehicle" class="form-select">
+                                    <option value="">Tüm Araçlar</option>
+                                </select>
+                                <select id="filter-city" class="form-select">
+                                    <option value="">Tüm Şehirler</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table" id="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70px;">Sıra</th>
+                                        <th>Kullanıcı</th>
+                                        <th>Seviye</th>
+                                        <th>Şehir</th>
+                                        <th class="text-right">Mesaj</th>
+                                        <th class="text-right">Beğeni</th>
+                                        <th class="text-right">Puan</th>
+                                        <th>Araç</th>
+                                        <th style="width: 100px;" class="text-center">Detay</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboard-tbody">
+                                    <tr>
+                                        <td colspan="9" class="text-center py-8 text-muted">
+                                            Yükleniyor...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Vehicles Tab -->
+                <div class="tab-pane" id="pane-vehicles">
+                    <div class="grid-layout three-cols" id="vehicles-cards-container">
+                        <!-- JS Will Populate Vehicle Statistics Cards Here -->
+                    </div>
+                </div>
+
+                <!-- SECTION: KVKK Tab -->
+                <div class="tab-pane" id="pane-kvkk">
+                    <div class="card glass kvkk-page">
+                        <div class="kvkk-header">
+                            <div class="kvkk-icon-badge">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <h2 class="kvkk-title">Kişisel Verilerin Korunması Aydınlatma Metni</h2>
+                            <p class="kvkk-subtitle">6698 Sayılı Kişisel Verilerin Korunması Kanunu kapsamında</p>
+                        </div>
+
+                        <div class="kvkk-content">
+                            <section class="kvkk-section">
+                                <div class="kvkk-section-icon">
+                                    <i data-lucide="info"></i>
+                                </div>
+                                <div>
+                                    <h3>1. Veri Sorumlusu</h3>
+                                    <p>Bu aydınlatma metni, <strong>Elektrikli Araç Sahipleri Telegram
+                                            Topluluğu</strong> yönetimi tarafından, 6698 sayılı Kişisel Verilerin
+                                        Korunması Kanunu ("KVKK") kapsamında hazırlanmıştır.</p>
+                                </div>
+                            </section>
+
+                            <section class="kvkk-section">
+                                <div class="kvkk-section-icon">
+                                    <i data-lucide="database"></i>
+                                </div>
+                                <div>
+                                    <h3>2. Toplanan Veriler</h3>
+                                    <p>Telegram grubumuza üye olmanız ve <strong>@earacsahipleribot</strong> botu
+                                        aracılığıyla paylaşmanız halinde aşağıdaki bilgiler toplanmaktadır:</p>
+                                    <ul class="kvkk-list">
+                                        <li>
+                                            <i data-lucide="map-pin"></i>
+                                            <span><strong>Şehir bilgisi</strong> — Yaşadığınız şehir</span>
+                                        </li>
+                                        <li>
+                                            <i data-lucide="car"></i>
+                                            <span><strong>Araç bilgisi</strong> — Sahip olduğunuz elektrikli araç
+                                                modeli</span>
+                                        </li>
+                                        <li>
+                                            <i data-lucide="message-square"></i>
+                                            <span><strong>Mesaj & etkileşim istatistikleri</strong> — Grup içi aktivite
+                                                verileri</span>
+                                        </li>
+                                        <li>
+                                            <i data-lucide="user"></i>
+                                            <span><strong>Telegram profil bilgileri</strong> — Ad, soyad ve kullanıcı
+                                                adı</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </section>
+
+                            <section class="kvkk-section">
+                                <div class="kvkk-section-icon">
+                                    <i data-lucide="target"></i>
+                                </div>
+                                <div>
+                                    <h3>3. Verilerin İşlenme Amacı</h3>
+                                    <p>Toplanan kişisel veriler yalnızca <strong>istatistiksel amaçlarla</strong>
+                                        işlenmekte olup, bu dashboard üzerinde topluluk analitiği olarak
+                                        görselleştirilmektedir. Veriler üçüncü şahıslarla paylaşılmamaktadır.</p>
+                                </div>
+                            </section>
+
+                            <section class="kvkk-section">
+                                <div class="kvkk-section-icon">
+                                    <i data-lucide="lock"></i>
+                                </div>
+                                <div>
+                                    <h3>4. Verilerin Niteliği ve Erişilebilirliği</h3>
+                                    <p>Telegram profil bilgileriniz (ad, soyad, kullanıcı adı) zaten Telegram
+                                        platformunda herkese açık bilgilerdir. <strong>Araç ve şehir bilgileri</strong>
+                                        ise tamamen sizin iradenizle, <strong>@earacsahipleribot</strong> aracılığıyla
+                                        girdiğiniz verilerdir.</p>
+                                    <p style="margin-top: 10px;">Tüm topluluk istatistikleri, bu dashboard üzerinde
+                                        <strong>herkesin erişimine açık</strong> olarak yayınlanmaktadır. Veriler
+                                        üzerinde herhangi bir gizlilik kısıtlaması bulunmamaktadır.</p>
+                                </div>
+                            </section>
+
+                            <section class="kvkk-section">
+                                <div class="kvkk-section-icon">
+                                    <i data-lucide="user-check"></i>
+                                </div>
+                                <div>
+                                    <h3>5. Haklarınız</h3>
+                                    <p>KVKK'nın 11. maddesi kapsamında aşağıdaki haklara sahipsiniz:</p>
+                                    <ul class="kvkk-list">
+                                        <li>
+                                            <i data-lucide="check-circle"></i>
+                                            <span>Kişisel verilerinizin işlenip işlenmediğini öğrenme</span>
+                                        </li>
+                                        <li>
+                                            <i data-lucide="check-circle"></i>
+                                            <span>İşlenmişse buna ilişkin bilgi talep etme</span>
+                                        </li>
+                                        <li>
+                                            <i data-lucide="check-circle"></i>
+                                            <span>Verilerin silinmesini veya yok edilmesini isteme</span>
+                                        </li>
+                                        <li>
+                                            <i data-lucide="check-circle"></i>
+                                            <span>İşlenen verilerin düzeltilmesini talep etme</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </section>
+
+                            <section class="kvkk-section">
+                                <div class="kvkk-section-icon">
+                                    <i data-lucide="trash-2"></i>
+                                </div>
+                                <div>
+                                    <h3>6. Veri Silme Talebi</h3>
+                                    <p>Talep etmeniz halinde, sistemimizdeki tüm kişisel verileriniz kalıcı olarak
+                                        silinecektir. Silme talebinizi aşağıdaki kanallardan iletebilirsiniz:</p>
+                                    <div class="kvkk-contact-cards">
+                                        <a href="https://t.me/ToggSahipleri" target="_blank" rel="noopener"
+                                            class="kvkk-contact-card">
+                                            <i data-lucide="users"></i>
+                                            <div>
+                                                <strong>Grup Yöneticileri</strong>
+                                                <span>Telegram grubundan iletişim</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+
+            </div>
+        </main>
+    </div>
+
+    <!-- User Details Modal (Drawer style / Glassmorphic dialog) -->
+    <div class="modal-overlay" id="user-detail-modal">
+        <div class="modal-container glass">
+            <button class="modal-close" id="btn-close-modal">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header-profile">
+                <div class="modal-avatar" id="modal-user-avatar">
+                    <!-- E.g., First Letter of Name -->
+                    U
+                </div>
+                <div class="modal-profile-title">
+                    <h2 id="modal-user-name">-</h2>
+                    <span id="modal-user-handle">@username</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-badge-container">
+                    <span class="badge badge-level" id="modal-user-level">-</span>
+                </div>
+
+                <a href="#" target="_blank" class="btn-telegram-chat" id="modal-btn-telegram">
+                    <i data-lucide="send"></i>
+                    <span>Telegram Sohbeti Başlat</span>
+                </a>
+
+                <div id="modal-no-username-info"
+                    style="display: none; flex-direction: column; gap: 8px; margin: 16px 0; padding: 12px; background: rgba(8, 145, 178, 0.05); border: 1px solid rgba(8, 145, 178, 0.1); border-radius: 8px; font-size: 0.88rem; line-height: 1.4;">
+                    <div style="color: hsl(var(--text-muted)); font-weight: 500; font-size: 0.85rem;">
+                        ⚠️ Bu kullanıcının Telegram kullanıcı adı bulunmadığı için tarayıcıdan doğrudan sohbet
+                        başlatılamaz.
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <button id="btn-copy-tg-link"
+                            style="flex: 1; padding: 8px; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: 1px solid rgba(8, 145, 178, 0.15); background: rgba(8, 145, 178, 0.08); color: hsl(var(--text-primary)); display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+                            <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                            <span>ID Linkini Kopyala</span>
+                        </button>
+                        <button id="btn-copy-tg-id"
+                            style="flex: 1; padding: 8px; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: 1px solid rgba(8, 145, 178, 0.15); background: rgba(8, 145, 178, 0.08); color: hsl(var(--text-primary)); display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+                            <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                            <span>ID Kopyala</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-stats-grid">
+                    <div class="modal-stat-card">
+                        <span class="modal-stat-label">Puan</span>
+                        <span class="modal-stat-value" id="modal-stat-points">-</span>
+                    </div>
+                    <div class="modal-stat-card">
+                        <span class="modal-stat-label">Mesaj</span>
+                        <span class="modal-stat-value" id="modal-stat-messages">-</span>
+                    </div>
+                    <div class="modal-stat-card">
+                        <span class="modal-stat-label">Beğeni</span>
+                        <span class="modal-stat-value" id="modal-stat-reactions">-</span>
+                    </div>
+                </div>
+
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h4 class="section-title">🚗 Garaj / Araçlar</h4>
+                    <div id="modal-user-vehicles-list" class="modal-vehicles-container">
+                        <!-- JS Will Render Vehicles Here -->
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4 class="section-title">Kullanıcı Bilgileri</h4>
+                    <ul class="detail-list">
+
+                        <li>
+                            <span class="list-label">Şehir</span>
+                            <span class="list-value" id="modal-info-city">-</span>
+                        </li>
+                        <li>
+                            <span class="list-label">İlk Görülme</span>
+                            <span class="list-value" id="modal-info-first-seen">-</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Entry Point -->
+    <script src="app.js?v=2.1.5"></script>
+</body>
+
+</html>
