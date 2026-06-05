@@ -1109,27 +1109,12 @@ async function showUserDetail(userId) {
         if (noUsernameInfo) {
             noUsernameInfo.style.display = 'flex';
 
-            // Bind click handlers dynamically to ensure clean state
-            const copyLinkBtn = document.getElementById('btn-copy-tg-link');
+            // Bind click handler dynamically to ensure clean state
             const copyIdBtn = document.getElementById('btn-copy-tg-id');
 
-            // Remove existing event listeners by replacing buttons with clones
-            const newCopyLinkBtn = copyLinkBtn.cloneNode(true);
+            // Remove existing event listeners by replacing button with clone
             const newCopyIdBtn = copyIdBtn.cloneNode(true);
-            copyLinkBtn.parentNode.replaceChild(newCopyLinkBtn, copyLinkBtn);
             copyIdBtn.parentNode.replaceChild(newCopyIdBtn, copyIdBtn);
-
-            newCopyLinkBtn.addEventListener('click', () => {
-                const textToCopy = `tg://user?id=${user.telegram_id}`;
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    const span = newCopyLinkBtn.querySelector('span');
-                    const originalText = span.textContent;
-                    span.textContent = 'Kopyalandı!';
-                    setTimeout(() => {
-                        span.textContent = originalText;
-                    }, 1500);
-                });
-            });
 
             newCopyIdBtn.addEventListener('click', () => {
                 const textToCopy = String(user.telegram_id);
